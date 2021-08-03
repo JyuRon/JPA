@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Book extends BaseEntity implements Auditable {
-    // pc test
+
     @Id
     @GeneratedValue
     private Long id;

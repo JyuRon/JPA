@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @EntityListeners(value = {UserEntityListener.class})
-// Git Test
+
 // @Table(name="user", indexes = {@Index(columnList = "name")}, uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 // 해당 어노테이션을 작성할 경우 primary key field를 만들어야한다.
 @Entity // 해당 객체가 JPA에서 관리함을 알림
