@@ -18,21 +18,29 @@ import java.time.LocalDateTime;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class Book extends BaseEntity implements Auditable {
+public class Book extends BaseEntity{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    private String author;
+    private String category;
 
-//    @CreatedDate
-//    private LocalDateTime createdAt;
-//
-//    @LastModifiedDate
-//    private LocalDateTime updatedAt;
+    private Long authorId;
+
+    private Long publisherId;
+
+//  mappedBy를 사용하는 이유
+//	관계를 소유하는 필드입니다. 이 요소는 연결의 역방향(소유자가 아님)에서만 지정됩니다.
+//  연관키를 해당테이블에서 가지지 않게 된다. --> 객체에서는 살아있음
+//	book에 BookReviewInfo 정보를 insert하지 않아도 book에서도  BookReviewInfo 참조 가능
+//	이 경우 toString이 순환참조를 하게 되어 stackOverflow ---> @ToString.Exclude로 해결
+    @OneToOne(mappedBy = "book")
+    @ToString.Exclude
+    private BookReviewInfo bookReviewInfo;
+
 
 //    @PrePersist // insert method가 실행되기 전
 //    public void prePersist(){

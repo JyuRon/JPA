@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @NoArgsConstructor
@@ -20,12 +22,12 @@ import java.time.LocalDateTime;
 @Builder
 @EntityListeners(value = {UserEntityListener.class})
 
-// @Table(name="user", indexes = {@Index(columnList = "name")}, uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
-// 해당 어노테이션을 작성할 경우 primary key field를 만들어야한다.
+
 @Entity // 해당 객체가 JPA에서 관리함을 알림
-public class User extends BaseEntity implements Auditable {
+public class User extends BaseEntity{
     @Id
-    @GeneratedValue // 자동으로 증가하는 숫자값
+    //@GeneratedValue // 자동으로 증가하는 숫자값
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NonNull
@@ -37,6 +39,13 @@ public class User extends BaseEntity implements Auditable {
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
+    // NullPointerException 방지, 안해도 문제는 없긴 함
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private List<UserHistory> userHistories = new ArrayList<>();
+
+
+
 //    @Column(updatable = false)
 //    @CreatedDate
 //    private LocalDateTime createdAt;
@@ -45,10 +54,7 @@ public class User extends BaseEntity implements Auditable {
 //    private LocalDateTime updatedAt;
 
 
-   // @Transient // 영속성 처리에서 제외됨 : DB에는 반영X
-    //private String testData;
-
-    //@OneToMany(fetch = FetchType.EAGER)
-    //private List<Address> address;
+//    @Transient // 영속성 처리에서 제외됨 : DB에는 반영X
+//    private String testData;
 
 }

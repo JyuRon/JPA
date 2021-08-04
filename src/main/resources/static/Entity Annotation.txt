@@ -1,0 +1,71 @@
+*** Table ****
+@Table(name="user", indexes = {@Index(columnList = "name")}, uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
+
+
+*** Primary Key ***
+@Id
+@GeneratedValue // 자동으로 증가하는 숫자값
+ // Auto : system index
+ // IDENTITY : MYSQL  --> commit안하면 나중에 빠진 index가 생김 , 테이블 마다 인덱스이며 AUTO_INCREMENT한다
+// SEQUENCE : ORACLE
+
+
+****Entity Listener ****
+@EnableJpaAuditing 
+	-프로젝트 Application에서의 annotation
+	-스프링의 기본 Entity Listener를 사용
+	- EntityListeners에 AuditingEntityListener.class 추가
+	- 이후 필드에 @CreatedDate, @LastModifiedDate등 사용
+
+@PrePersist
+	- insert method가 실행되기 전
+	- GeneratedValue : IDENTITY인 경우 insert가 되는 동시에 primary key id값이 입력
+	- 해당 메서드에서 primary key를 참조하게 되면 null값이 참조된다.
+@PreUpdate
+@PostPersist // insert method가 실행된 후
+@PostUpdate
+@PreRemove
+@PostRemove
+@PostLoad // select문이 실행된 이후
+
+
+*** Column ***
+@Column(updatable = false)
+@Column(nullable = false)
+@Column(insertable = false)
+@Transient // 영속성 처리에서 제외됨 : DB에는 반영X
+@Enumerated(value = EnumType.STRING)
+
+
+
+
+
+
+
+*** 1:1 Relation  (Book <-> BookReviewInfo) ***
+@OneToOne(optional = false)
+ left outer join(합집합) --> 값이 존재하지 않을 수 있기 때문
+
+@OneToOne(optional = true)
+inner join(교집합) --> 값이 존재한다는 것을 확신 --> not null
+
+
+@OneToOne(mappedBy = "book")
+	- 관계를 소유하는 필드입니다. 이 요소는 연결의 역방향(소유자가 아님)에서만 지정됩니다.
+	- 연관키를 해당테이블에서 가지지 않게 된다. --> 객체에서는 살아있음
+	- book에 BookReviewInfo 정보를 insert하지 않아도 book에서도  BookReviewInfo 참조 가능
+	- 이 경우 toString이 순환참조를 하게 되어 stackOverflow ---> @ToString.Exclude로 해결
+
+
+@ToString.Exclude
+toString을 생성할때 해당 필드를 제외
+
+
+*** 1:N Relation (User <-> UserHistory) ***
+@OneToMany
+ private List<UserHistory> userHistories = new ArrayList<>();  // NullPointerException 방지, 안해도 문제는 없긴 함
+
+@JoinColumn(name = "user_id")
+중간 mapping테이블이 생성되면서 이상한 결과값이 출력된다.
+엔티티가 어떤 컬럼으로 조인을 하게 될지 지정한다.
+

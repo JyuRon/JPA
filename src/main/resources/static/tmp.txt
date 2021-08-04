@@ -1,0 +1,24 @@
+
+
+@OneToMany(fetch = FetchType.EAGER)
+	- LazyInitializationException 해결
+	- 이유는 Transaction떄 설명
+
+
+@JoinColumn : 해당 DDL을 해결
+create table user_user_histories (
+       user_id bigint not null,
+        user_histories_id bigint not null
+    )
+
+USER_HISTORY에
+user_histories_id bigint 컬럼 생성
+이를 변경하고자
+
+@JoinColumn(name = "user_id")
+Table [user_history] contains physical column name [user_id] referred to by multiple logical column names: [user_id], [userId]
+[user_history] 테이블에 여러 논리 열 이름으로 참조되는 실제 열 이름 [user_id]이(가) 포함되어 있습니다. [user_id], [userId]
+
+
+USERHISTORY Entity에 userid 컬럼명 변경
+

@@ -1,5 +1,6 @@
 package com.fastcampus.jpa.bookmanager.domain;
 
+import com.fastcampus.jpa.bookmanager.domain.listener.Auditable;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,10 +14,10 @@ import java.time.LocalDateTime;
 @Data
 @MappedSuperclass // 해당 클래스의 필드를 상속받는 Entity에 포함
 @EntityListeners(value = AuditingEntityListener.class)
-public class BaseEntity {
-    @CreatedDate
+public class BaseEntity implements Auditable {
+    @CreatedDate // @PrePersist
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
+    @LastModifiedDate // @PreUpdate
     private LocalDateTime updatedAt;
 }

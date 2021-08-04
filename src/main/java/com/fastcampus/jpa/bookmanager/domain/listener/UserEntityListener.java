@@ -7,17 +7,19 @@ import com.fastcampus.jpa.bookmanager.support.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 
 public class UserEntityListener {
-    // entity listener는 spring bean을 주입받지 못 한다
+//    entity listener는 spring bean을 주입받지 못 한다
 //    @Autowired
 //    UserHistoryRepository userHistoryRepository;
 
-    @PreUpdate
-    @PrePersist
+    @PostUpdate
+    @PostPersist
     public void prePersistAndPreUpdate(Object o){
         UserHistoryRepository userHistoryRepository = BeanUtils.getBean(UserHistoryRepository.class);
         User user = (User) o;
