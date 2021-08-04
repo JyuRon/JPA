@@ -31,9 +31,7 @@ class BookReviewInfoRepositoryTest {
         BookReviewInfo result2 = result.getBookReviewInfo();
         System.out.println(result2);
 
-
     }
-
 
 
     private Book givenBook(){

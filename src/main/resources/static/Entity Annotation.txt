@@ -61,11 +61,44 @@ inner join(교집합) --> 값이 존재한다는 것을 확신 --> not null
 toString을 생성할때 해당 필드를 제외
 
 
+
+
+
+
 *** 1:N Relation (User <-> UserHistory) ***
 @OneToMany
  private List<UserHistory> userHistories = new ArrayList<>();  // NullPointerException 방지, 안해도 문제는 없긴 함
 
-@JoinColumn(name = "user_id")
-중간 mapping테이블이 생성되면서 이상한 결과값이 출력된다.
-엔티티가 어떤 컬럼으로 조인을 하게 될지 지정한다.
+
+@OneToMany(fetch = FetchType.EAGER)
+	- LazyInitializationException 해결
+	- 이유는 Transaction떄 설명
+
+
+@JoinColumn :
+    - 중간 mapping table이 생기는 것을 해결
+    - Entity가 어떠한 column으로 join을 할 것인지 지정
+
+    create table user_user_histories (
+           user_id bigint not null,
+            user_histories_id bigint not null
+        )
+
+    - mapping table이 사라지면서 user_history에 user_histories_id 라는 column이 생성
+    - JoinColumn의 default 값이 해당 field에 맞는 column명을 찾아 매칭(없으면 생성)
+
+
+@JoinColumn(name="user_id")
+    - UserHistory의 user_id와 join 할 것을 지정
+    - Table [user_history] contains physical column name
+        [user_id] referred to by multiple logical column names: [user_id],[userId]
+    - 논리적 모호성을 해결하기 위해 @Column(name="user_id")를 UserHistory에도 작성
+
+
+@JoinColumn(name = "user_id", insertable = false, updatable = false)
+    - history라는 특징 상 User에서 수정, 삭제가 불가능 해야 한다.
+    - 즉 readOnly 설정을 해야한다.
+
+
+
 
