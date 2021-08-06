@@ -11,6 +11,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 
 @Entity
@@ -30,7 +34,7 @@ public class Book extends BaseEntity{
 
     private Long authorId;
 
-    private Long publisherId;
+//    private Long publisherId;
 
 //  mappedBy를 사용하는 이유
 //	관계를 소유하는 필드입니다. 이 요소는 연결의 역방향(소유자가 아님)에서만 지정됩니다.
@@ -40,6 +44,37 @@ public class Book extends BaseEntity{
     @OneToOne(mappedBy = "book")
     @ToString.Exclude
     private BookReviewInfo bookReviewInfo;
+
+    @OneToMany
+    @JoinColumn(name="book_id")
+    @ToString.Exclude
+    private List<Review> reviews = new ArrayList<>();
+
+    @ManyToOne
+    @ToString.Exclude
+    private Publisher publisher;
+
+//    @ManyToMany
+//    @ToString.Exclude
+//    private List<Author> authors = new ArrayList<>();
+
+
+//    public void addAuthor(Author... author){
+//        Collections.addAll(this.authors,author);
+//    }
+
+
+    @OneToMany
+    @JoinColumn(name="book_id")
+    @ToString.Exclude
+    private List<BookAndAuthor> bookAndAuthors = new ArrayList<>();
+
+
+    public void addBookAndAuthors(BookAndAuthor... bookAndAuthors){
+        Collections.addAll(this.bookAndAuthors,bookAndAuthors);
+    }
+
+
 
 
 //    @PrePersist // insert method가 실행되기 전

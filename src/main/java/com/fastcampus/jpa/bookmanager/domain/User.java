@@ -42,7 +42,14 @@ public class User extends BaseEntity{
     // NullPointerException 방지, 안해도 문제는 없긴 함
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @ToString.Exclude
     private List<UserHistory> userHistories = new ArrayList<>();
+
+
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    @ToString.Exclude
+    private List<Review> reviews = new ArrayList<>();
 
 
 
