@@ -1,10 +1,18 @@
 package com.fastcampus.jpa.bookmanager.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -12,9 +20,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
+//@MockBean(JpaMetamodelMappingContext.class)
+//@SpringBootTest
 class HelloWorldControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
+
+
+    //@SpringBootTest
+
+//    @Autowired
+//    private WebApplicationContext woc;
+
+//    private MockMvc mockMvc;
+
+//    @BeforeEach
+//    void before(){
+//        mockMvc = MockMvcBuilders.webAppContextSetup(woc).build();
+//    }
 
     @Test
     void helloWorld() throws Exception{

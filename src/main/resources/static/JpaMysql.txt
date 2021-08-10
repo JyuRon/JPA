@@ -1,0 +1,56 @@
+create database book_manager;
+
+
+1. build.gradle dependencies에 jdbc 패키지 다운
+ 	runtimeOnly 'mysql:mysql-connector-java' 추가
+
+
+2. application.yml에서 jdbc 연결 관련 설정 추가
+
+	datasource:
+    		url: jdbc:mysql://localhost:3306/book_manager
+    		username: root
+    		password: 1234
+		initialization-mode: always
+
+initialization-mode: data.sql을 불러오는 작업
+
+always : 모든 데이터 베이스에서 사용을 한다
+embedded : 임베디드 DB의 경우에만 사용하겟다.
+none : 데이터 초기화를 하지 않는다.
+
+
+
+3. application.yml에서 Entity와 Table 생성에 관한 설정
+
+	generate-ddl: true
+    	hibernate:
+      		ddl-auto: create-drop
+
+	**generate-ddl***
+	Entity에 맞는 table을 자동으로 생성할 것인지 설정
+
+	**ddl-auto 설정값 ***
+		none : 실행 x
+		create : 앞쪽에서 드랍을 하고 생성
+		create-drop : 생성하고 프로그램 종료시 자동 삭제
+		update : 변경에 대한 부분만 반영
+		validate : 변경이 되었는지만 확인하고 변경시 error발생
+
+	* initialization-mode: always
+ddl-auto의 설정값이 generate-ddl보다 우선순위가 높다.
+
+
+h2 db는 임베디드 db여서 위의 설정값이 기본적으로 들어가있다.
+
+@Transactional : 각각의 테스트가 끝나면 roll-back시켜줌
+
+
+
+
+5. WebMvcTest Jpa관련 오류 해결
+
+(1) 테스트 상단에 @MockBean(JpaMetamodelMappingContext.class) 추가
+(2) Application 상단에 @EnableJpaAuditing 삭제 후 JpaConfiguration.java 생성  ---> 추천
+(3) @WebMvcTest 가 아닌 @SpringBootTest를 사용
+	이 경우 @Autowird MockMvc -> @Autowired WebApplicationContext woc 사용

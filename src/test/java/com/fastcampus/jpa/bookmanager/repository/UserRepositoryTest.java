@@ -20,6 +20,7 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.endsWith;
 
 @SpringBootTest
+@Transactional
 class UserRepositoryTest {
 
     @Autowired
