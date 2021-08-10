@@ -28,13 +28,13 @@ class HelloWorldControllerTest {
     private MockMvc mockMvc;
 
 
-    //@SpringBootTest
-
+//    @SpringBootTest
+//
 //    @Autowired
 //    private WebApplicationContext woc;
-
+//
 //    private MockMvc mockMvc;
-
+//
 //    @BeforeEach
 //    void before(){
 //        mockMvc = MockMvcBuilders.webAppContextSetup(woc).build();
