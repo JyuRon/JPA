@@ -162,3 +162,31 @@
 
 7. @Transactional Scope
        클래스 트랜잭션 < 메소드 트랜잭션
+
+
+8. Cascade
+
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+
+    (1) PERSIST : insert구문 실행시
+    (2) MERGE : update
+    (3) REMOVE : delete
+
+
+9. orphanRemoval
+
+    @OneToMany(orphanRemoval = true)
+
+    - 고아 객체  : 부모 엔티티와 연관관계가 끊어진 자식 엔티티
+    - 이러한 고아 객체를 자동으로 삭제되게 할 수 있는 방법
+    - OneToMany에서 보통 사용한다.
+    - 테스트코드 성공한걸 보고 싶다.
+
+
+10. SoftDelete
+    @Where(clause = "deleted = false")
+    public class Book extends BaseEntity{}
+
+    where절을 자동으로 추가하여 삭제옵션이 체크되었는지만 확인
+    실제로는 삭제되지 않았다.
+
