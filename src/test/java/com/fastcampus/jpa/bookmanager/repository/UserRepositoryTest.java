@@ -307,7 +307,7 @@ class UserRepositoryTest {
 
         userRepository.findAll().forEach(System.out::println);
 
-        // Gender : index번호가 출력된다. 이것또한 어노테이션으로 변경가능
+        // Gender : index번호가 출력된다. 이것또한 어노테이션으로 변경가능(value = EnumType.STRING) 추가
         System.out.println(userRepository.findRawRecord().get("gender"));
     }
 
