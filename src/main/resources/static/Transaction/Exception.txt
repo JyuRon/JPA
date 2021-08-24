@@ -1,0 +1,15 @@
+*** Transactional Exception ***
+
+    - 선택적 Exception
+        (1) RuntimeException을 상속받지 않은 Exception
+        (2) 반드시 try/catch or throws로 예외 처리를 해야한다. 안하면 컴파일 조차 안된다.
+
+    - 선택적 Exception : Roll-Back 처리가 안됨
+    - Runtime Exception : Roll-Back 처리함
+
+    - 선택적 Exception도 Roll-Back시키는 방법
+        @Transactional(rollbackFor = {Exception.class})
+
+    - Bean Class 내부에서 내부를 호출할때는 @Transactional 효과가 없다.
+        @Transactional이 달리지 않은 메서드에서 @Transactional이 달린 메서드를 호출하여
+        RuntimeException이 일어났음에도 commit이 되었다.

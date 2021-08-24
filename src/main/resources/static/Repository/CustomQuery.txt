@@ -1,47 +1,4 @@
-1. default 값 설정
-
-    - BaseEntity에서 AuditingEntityListener @CreatedDate, @LastModifiedDate 를 통해 값을 채워 주고 있었다.
-    - 하지만 data.sql를 통해 만들어진 데이터의 경우 Listener를 타지 않기 때문에 null 값이 입력
-
-
-    (1) BaseEntity에서 @Column(nullable = false, updatable = false) 설정하고  date.sql에 now()값을 입력
-        - Field 'created_at' doesn't have a default value
-	    - 앞서 말했듯이 Listener를 타지 않아 말생하는 현상
-
-
-    (2) Auto DDL을 사용할때 추가적인 설정 필요
-        - @Column(columnDefinition = "datetime(6) default now(6) comment '생성시간'", nullable = false)
-        - default값을 지정하는 방법 ---> data.sql때문에 설정하는 방법임 보통은 Auditable Listener로 사용
-        - sql 타입을 치환하는 기능이다.
-
-
-2. columnDefinition
-
-    - now(6)  : 초 아래 단위를 6자리까지 표시
-
-    (1) columnDefinition 을 사용하지 않을 경우
-        create table book (
-               id bigint not null auto_increment,
-                created_at datetime(6) not null,
-                updated_at datetime(6) not null
-
-
-    (2) columnDefinition = "default now(6)"
-        create table book (
-               id bigint not null auto_increment,
-                created_at default now(6) not null,
-                updated_at default now(6) not null,
-
-
-    (3) columnDefinition = "datetime(6) default now(6)
-        create table book (
-               id bigint not null auto_increment,
-                created_at datetime(6) default now(6) not null,
-                updated_at datetime(6) default now(6) not null,
-
-
-
-3. @Query
+1. @Query
 
     - List<Book> findByCategoryIsNullAndNameEqualsAndCreatedAtGreaterThanEqualAndUpdatedAtGreaterThanEqual(String name, LocalDateTime createdAt, LocalDateTime updatedAt);
     - 위와 같이 Query Method를 사용할 경우 가독성이 떨어지는 경우를 해결하기 위해 사용
@@ -61,7 +18,7 @@
                 @Param("updatedAt") LocalDateTime updatedAt);
 
 
-4. 특정 Field 추출과 Paging
+2. 특정 Field 추출과 Paging
 
     (1) Tuple 을 이용한 특정 Field 추출
         @Query(value = "select b.name as name, b.category as category from Book b ")
@@ -83,7 +40,7 @@
 
 
 
-5. native query
+3. native query
 
     - JPQL이 아닌 SQL을 사용할 수 있게 하는 설정
     - JPQL과 다르게 Entity 속성을 사용하지 못함(@Where이 적용되지 않음)
@@ -110,28 +67,3 @@
         int updateCategories();
 
 
-6. converter
-    - DB에 저장된 특정 상태 코드(200,400,404 등)을 변환하여 Success, Error, PageNotFound 등으로 바꿔 보여주는 기능
-
-        <변환될 객체, DB의 attribute>
-        @Converter
-        public class BookStatusConverter implements AttributeConverter<BookStatus, Integer> {}
-
-
-        @Convert(converter = "BookStatusConverter.class")
-        BookStatus status;
-
-
-    - AttributeConverter 구현을 반만 한다면??
-        (1) @Transactional 이 끝나게 되면 현재 cache에 가지고 있는 정보와 DB를 비교하여 다르면 update를 하게 된다.
-        (2) 이때 Converter에 convertToDatabaseColumn 메소드가 return null 로 구현되어 있다면 null 과 기존 DB값을 비교 하기 때문에
-            null로 update를 치게된다.
-        (3) 결국 converter의 경우 양쪽 메소드 모두를 구현해야 한다.
-
-
-    - autoApply
-        @Converter(autoApply = true)
-        @Convert 삭제
-
-        <BookStatus, Integer> 선언 부 에서 BookStatus 로 선언된 field에 자동으로 매핑된다.
-        이러한 점 때문에 <Integer, String> 등 기본 자료형이 포함된 converter를 사용할 경우 원치 않게 매핑이 되어진다.

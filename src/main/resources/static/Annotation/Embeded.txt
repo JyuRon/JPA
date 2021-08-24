@@ -74,9 +74,20 @@
         [8, 2021-08-24 13:55:49.63456, 2021-08-24 13:55:49.63456, null, null, null, null, null, null, null, null, null, null, jordan]
 
 
+    - assertThat
+        assertAll(
+                     ()->assertThat(userRepository.findById(7L).get().getHomeAddress()).isNull(),
+                     ()->assertThat(userRepository.findById(8L).get().getHomeAddress()).isInstanceOf(Address.class)
+
+                    );
+
+
     - 이러한 차이는 영속성 context 에서 제공하는 cache때문에 생기는 현상이다.
 
     - entityManager.clear() 이후
         homeAddress=null, companyAddress=null
         homeAddress=null, companyAddress=null
+
+
+
 

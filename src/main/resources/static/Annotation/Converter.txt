@@ -1,0 +1,26 @@
+* converter
+
+    - DB에 저장된 특정 상태 코드(200,400,404 등)을 변환하여 Success, Error, PageNotFound 등으로 바꿔 보여주는 기능
+
+        <변환될 객체, DB의 attribute>
+        @Converter
+        public class BookStatusConverter implements AttributeConverter<BookStatus, Integer> {}
+
+
+        @Convert(converter = "BookStatusConverter.class")
+        BookStatus status;
+
+
+    - AttributeConverter 구현을 반만 한다면??
+        (1) @Transactional 이 끝나게 되면 현재 cache에 가지고 있는 정보와 DB를 비교하여 다르면 update를 하게 된다.
+        (2) 이때 Converter에 convertToDatabaseColumn 메소드가 return null 로 구현되어 있다면 null 과 기존 DB값을 비교 하기 때문에
+            null로 update를 치게된다.
+        (3) 결국 converter의 경우 양쪽 메소드 모두를 구현해야 한다.
+
+
+    - autoApply
+        @Converter(autoApply = true)
+        @Convert 삭제
+
+        <BookStatus, Integer> 선언 부 에서 BookStatus 로 선언된 field에 자동으로 매핑된다.
+        이러한 점 때문에 <Integer, String> 등 기본 자료형이 포함된 converter를 사용할 경우 원치 않게 매핑이 되어진다.

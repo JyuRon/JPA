@@ -1,0 +1,34 @@
+
+사례 1. Embeded.txt - (3) NullPointerException 문제가 발생할까??
+
+사례 2. CustomQuery.txt - 2. columnDefinition
+
+    Auto DDL에서 LocalDateTime 자료형으로 field를 만들게 되면 datetime(6)로 생성
+    하지만 현업에서는 기존 DB에 컬럼값을 매핑에서 사용하게 때문에 AutoDDL을 사용하는 경우가 없음
+    만약 기존 DB에서 사용하는 datetime(5)이면 어떤 상황이 연출이 될까??
+
+
+    @Column(columnDefinition = "datetime") // 초 단위까지만 표현
+    private LocalDateTime commentedAt;
+
+
+    commentedAt=2021-08-24T18:14:57.240322900
+
+
+    commentRepository.saveAndFlush(comment);
+    entityManager.clear();
+
+    commentedAt=2021-08-24T18:14:57
+
+    saveAndFlush를 한 이유는 그냥 save를 해버리면 캐시상으로만 변경이 된것이다.
+    이후 clear()를 해버리면 반영이 안되기 때문
+
+
+
+사례 3.
+
+    @Column(columnDefinition = "datetime(6) default now(6)")
+    private LocalDateTime commentedAt;
+
+
+    @DynamicInsert

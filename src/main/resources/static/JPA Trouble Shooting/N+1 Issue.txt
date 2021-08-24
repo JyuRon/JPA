@@ -1,29 +1,4 @@
-(1) Fetch Type
-
-    - EAGER 와 LAZY
-        LAZY :
-            User에서 UserHistory의 경우 필요한 경우만 호출을 해야만 한다.
-            이때 JPA에서는 get을 통에 이를 알고 호출을 한다
-            단, 이는 Session 즉 Entity가 영속성 context 생명주기에 속해 있을때만 가능 --> @Transactional
-        EAGER :
-            한 번에 모든 정보를 불러온다.
-
-
-    - 연관관계별 FETCH Default
-        EAGER : OneToOne, ManyToOne
-        LAZY : OneToMany, ManyToMany
-
-
-    - 결국 lazy 어쩌구의 오류 해결 방안은?
-        test method에 @Transactional을 붙인다.
-        fetch type을 EAGER로 바꿔준다.
-
-    - ToString.Exclude
-        toString()을 사용하게 되면 get메서드를 사용 --> lazy임에도 불구하고 무조건 모든게 호출
-        @ToString.Exclude는 순환참조를 막기위함뿐만 아니라 lazy를 효과적으로 사용하기 위함
-
-
-(2) N+1 이슈
+(1) N+1 이슈
 
     - N+1 문제란?
         @OneToMany를 하여 데이터를 불러오는 경우 DB처럼 JOIN을 하여서 가져오는 것이 아닌 Entity 하나 하나를 select 구문을 실행하여 불러오고 있음

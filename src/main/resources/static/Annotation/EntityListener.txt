@@ -1,0 +1,39 @@
+@EnableJpaAuditing
+	-프로젝트 Application에서의 annotation
+	- 현재 해당 프로젝트의 경우 configuration -> JpaConfiguration에서 따로 설정
+	-스프링의 기본 Entity Listener를 사용
+	- EntityListeners에 AuditingEntityListener.class 추가
+	- 이후 필드에 @CreatedDate, @LastModifiedDate등 사용
+
+
+@PrePersist
+	- insert method가 실행되기 전
+	- GeneratedValue : IDENTITY인 경우 insert가 되는 동시에 primary key id값이 입력
+	- 해당 메서드에서 primary key를 참조하게 되면 null값이 참조된다.
+
+@PreUpdate
+@PostPersist // insert method가 실행된 후
+@PostUpdate
+@PreRemove
+@PostRemove
+@PostLoad // select문이 실행된 이후
+
+
+
+** WebMvcTest JPA 관련 오류 해결 **
+
+    HelloWorldControllerTest 오류에 대한 해결
+
+    (1) 테스트 클래스 상단에 @MockBean(JpaMetamodelMappingContext.class) 추가
+    (2) Application 상단에 @EnableJpaAuditing 삭제 후 JpaConfiguration.java 생성  ---> 추천
+    (3) @WebMvcTest 가 아닌 @SpringBootTest를 사용
+
+        @Autowired
+        private WebApplicationContext woc;
+
+        private MockMvc mockMvc;
+
+        @BeforeEach
+        void before(){
+            mockMvc = MockMvcBuilders.webAppContextSetup(woc).build();
+        }

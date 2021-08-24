@@ -1,0 +1,63 @@
+*** @Transactional isolation ***
+
+
+    (0) Lock에 대한 정리
+
+        A 트랜잭션이 수정, 삭제의 경우 commit / roll-back 을 하기 전까지 자원을 소유하고 있다.
+        이 떄 B 트랜잭션이 A가 소유한 자원에 접근하여 수정, 삭제를 시도하게 되면 자원을 할당(commit / roll-back)
+        받기 전까지 Lock 상태에 걸리게 된다.
+
+
+    (1) BookServiceTest MYSQL 테스트 쿼리 ( Debug에서 Test코드 실행 후 sql문 실행)
+        start transaction;
+        update book set category = 'none'
+        commit; / rollback;
+
+
+    (2) isolation (독립, 격리)
+        동시에 발생하는 트랜잭션에 대해 데이터 접근에 대한 설정
+        Level이 높을 수록 격리단계가 높으며 데이터의 정확성을 보장해주는 대신에 동시처리 능력이 떨어짐
+
+
+    (3) Isolation Value
+        - DEFAULT
+            DBMS Isolation 정책을 따른다.
+
+        * READ_UNCOMMITTED (Level 0)
+            - 다른 Transaction이 commit을 하지 않아도 변경된 값을 불러온다.(Dirty Read)
+
+            - 다른 Transaction이 rollback을 하게 되면 rollback 된 값이 반영되지 않고 변경된 값이 그대로 들어감
+                -->이는 Entity에 값이 이미 저장이 되었기 때문
+                --> Entity에 @DynamicUpdate 추가로 해결 가능 --> update에 필요한 field만 사용
+
+
+        * READ_COMMITTED (Level 1)
+            - 다른 Transaction이 commit을 하여 변경된 내용을 바로 반영한다.
+            - READ_UNCOMMITTED 에서 Roll-Back 을 시킨 상황을 해결
+            - JPA에서는 EntityManager Cache 기능에 의하여 반영이 안됨
+                --> entityManager.clear() 를 이용하여 cache를 지워줌
+            - 작업을 수행할 떄 원치 않게 데이터가 변경될 수 있음(UNREPEATABLE_READ)
+                ---> REPEATABLE_READ 가 해결
+
+
+        * REPEATABLE_READ (Level 2)
+            - MYSQL의 기본정책, Transaction이 진입하였을때의 DB 상태를 계속 유지
+                --> Transaction 이 시작할때에 조회했던 데이터를 별도로 저장(snap-shot)
+                --> 데이터 베이스의 모든 데이터를 스냅샷 하는 것인지를 모르겠음...
+            - Transaction 내에서 같은 값을 불러오더라도 데이터는 변하지 않는다.
+            - Phantom read 현상 발생
+                --> A 트랜잭션이, B트랜잭션이 동시에 작업을 수행하며
+                --> B가 insert, commit 작업을, 이후 A는 update 작업을 수행
+                --> B가 insert 한 데이터까지 update에 영향을 받음
+                --> 한 트랜잭션 안에서 일정 범위의 레코드를 두번 이상 읽을 때,
+                    첫번째 쿼리에서 없던 레코드가 두번째 쿼리에서 나타나는 현상
+                    이는 트랜잭션 도중 새로운 레코드가 삽입되는 것을 허용하기 때문에 나타나는 현상임.
+                --> SERIALIZABLE이 이를 해결
+
+
+
+        * SERIALIZABLE (Level 3)
+            - 기본적으로 REPEATABLE_READ에 insert를 허용하지 않는 수준
+            - 상대측에서 먼저 자원을 사용하다면 commit 할때까지 대기
+            - 내 쪽에서 자원을 사용하고 있고 상대측에서 자원을 원한다면 내 쪽에서 commit 할때까지 대기
+            - 즉 자원 독점

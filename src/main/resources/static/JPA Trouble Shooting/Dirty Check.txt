@@ -1,0 +1,40 @@
+*** Dirty Check ***
+
+    - 상황1) @Transactional 로 묶은 테스트를 진행시
+    - 상황2) Entity가 수정되었지만 save를 하지 않은 상태
+    - 상황3) appliation.yml 에서 로그 설정을 낮춤
+
+    ===============================================
+    - 쿼리를 살펴보면 save를 하지 않았지만 update가 실행됨
+
+
+    - 로그를 보면 Dirty 라는 말이 생김
+        이를 체크해주는 것을 Dirty Check
+        DefaultFlushEntityEventListener 인터페이스 -> logDirtyProperties 메서드
+
+   =================================================
+   - insert문의 경우 해당 결과가 나타나지 않음
+        영속화되어지기 전이기 때문에
+   - 즉, 영속성 컨텍스트에서 관리되고 있는것에 한하여 Dirty Check가 진행됨
+
+   =================================================
+   - 해결방법
+        @Transactional(readonly = true)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

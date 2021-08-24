@@ -44,25 +44,6 @@ create database book_manager;
 
 
 
-
-4. WebMvcTest JPA 관련 오류 해결
-
-    HelloWorldControllerTest 오류에 대한 해결
-
-    (1) 테스트 클래스 상단에 @MockBean(JpaMetamodelMappingContext.class) 추가
-    (2) Application 상단에 @EnableJpaAuditing 삭제 후 JpaConfiguration.java 생성  ---> 추천
-    (3) @WebMvcTest 가 아닌 @SpringBootTest를 사용
-
-        @Autowired
-        private WebApplicationContext woc;
-
-        private MockMvc mockMvc;
-
-        @BeforeEach
-        void before(){
-            mockMvc = MockMvcBuilders.webAppContextSetup(woc).build();
-        }
-
-5. Transactional
+4. Transactional
     class위에 @Transactional을 써주게 되면 각 테스트마다 @Transactional을 걸어주게 되며 완료될때마다 Roll-Back을 시킨다.
     메서드와 구분이 필요!

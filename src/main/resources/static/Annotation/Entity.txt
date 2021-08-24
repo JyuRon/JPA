@@ -1,0 +1,29 @@
+*** Table ****
+@Table(name="user", indexes = {@Index(columnList = "name")}, uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
+
+
+*** Primary Key ***
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY) // 자동으로 증가하는 숫자값
+
+    Auto : system index
+    IDENTITY : MYSQL  --> commit안하면 나중에 빠진 index가 생김 , 테이블 마다 인덱스이며 AUTO_INCREMENT한다
+    SEQUENCE : ORACLE
+
+
+
+
+*** Column ***
+    @Column(updatable = false)
+    @Column(nullable = false)
+    @Column(insertable = false)
+    @Transient // 영속성 처리에서 제외됨 : DB에는 반영X
+    @Enumerated(value = EnumType.STRING)
+
+
+
+*** ToString.Exclude ***
+    toString을 생성할때 해당 필드를 제외
+
+
+

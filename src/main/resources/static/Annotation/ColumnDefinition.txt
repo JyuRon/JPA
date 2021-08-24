@@ -1,0 +1,41 @@
+*** default 값 설정 ***
+
+    - BaseEntity에서 AuditingEntityListener @CreatedDate, @LastModifiedDate 를 통해 값을 채워 주고 있었다.
+    - 하지만 data.sql를 통해 만들어진 데이터의 경우 Listener를 타지 않기 때문에 null 값이 입력
+
+
+    (1) BaseEntity에서 @Column(nullable = false, updatable = false) 설정하고  date.sql에 now()값을 입력
+        - Field 'created_at' doesn't have a default value
+	    - 앞서 말했듯이 Listener를 타지 않아 말생하는 현상
+
+
+    (2) Auto DDL을 사용할때 추가적인 설정 필요
+        - @Column(columnDefinition = "datetime(6) default now(6) comment '생성시간'", nullable = false)
+        - default값을 지정하는 방법 ---> data.sql때문에 설정하는 방법임 보통은 Auditable Listener로 사용
+        - sql 타입을 치환하는 기능이다.
+
+
+
+*** columnDefinition ***
+
+    - now(6)  : 초 아래 단위를 6자리까지 표시
+
+    (1) columnDefinition 을 사용하지 않을 경우
+        create table book (
+               id bigint not null auto_increment,
+                created_at datetime(6) not null,
+                updated_at datetime(6) not null
+
+
+    (2) columnDefinition = "default now(6)"
+        create table book (
+               id bigint not null auto_increment,
+                created_at default now(6) not null,
+                updated_at default now(6) not null,
+
+
+    (3) columnDefinition = "datetime(6) default now(6)
+        create table book (
+               id bigint not null auto_increment,
+                created_at datetime(6) default now(6) not null,
+                updated_at datetime(6) default now(6) not null,
