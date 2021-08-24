@@ -1,0 +1,79 @@
+(1) Fetch Type
+
+    - EAGER 와 LAZY
+        LAZY :
+            User에서 UserHistory의 경우 필요한 경우만 호출을 해야만 한다.
+            이때 JPA에서는 get을 통에 이를 알고 호출을 한다
+            단, 이는 Session 즉 Entity가 영속성 context 생명주기에 속해 있을때만 가능 --> @Transactional
+        EAGER :
+            한 번에 모든 정보를 불러온다.
+
+
+    - 연관관계별 FETCH Default
+        EAGER : OneToOne, ManyToOne
+        LAZY : OneToMany, ManyToMany
+
+
+    - 결국 lazy 어쩌구의 오류 해결 방안은?
+        test method에 @Transactional을 붙인다.
+        fetch type을 EAGER로 바꿔준다.
+
+    - ToString.Exclude
+        toString()을 사용하게 되면 get메서드를 사용 --> lazy임에도 불구하고 무조건 모든게 호출
+        @ToString.Exclude는 순환참조를 막기위함뿐만 아니라 lazy를 효과적으로 사용하기 위함
+
+
+(2) N+1 이슈
+
+    - N+1 문제란?
+        @OneToMany를 하여 데이터를 불러오는 경우 DB처럼 JOIN을 하여서 가져오는 것이 아닌 Entity 하나 하나를 select 구문을 실행하여 불러오고 있음
+        연관 관계에서 발생하는 이슈로 연관 관계가 설정된 엔티티를 조회할 경우에 조회된 데이터 갯수(n) 만큼 연관관계의 조회 쿼리가 추가로 발생하여 데이터를 읽어오게 된다.
+
+        review의 개수만큼 comment를 찾는 쿼리가 증가
+
+        from
+                comment comments0_
+            where
+                comments0_.review_id=?
+
+
+    - LAZY를 사용하면 해결 할 수 있을까?
+        FETCH TYPE은 쿼리 실행시기에 대한 설정이지 N+1에대한 문제를 해결한 것은 아니다.
+        추가적으로 SELECT 쿼리가 실행되기 때문
+
+
+    - 해결 방안
+
+        * Fetch Join
+            1) custom query를 이용하여 직접 JPQL로 작성한다.
+            2) InnerJoin을 사용하게 된다.
+            3) 데이터 호출 시점에 모든 연관 관계의 데이터를 가져오기 때문에 FetchType을 Lazy로 해놓는것이 무의미하다.
+            4) 또한, 페이징 쿼리를 사용할 수 없다. 하나의 쿼리문으로 가져오다 보니 페이징 단위로 데이터를 가져오는것이 불가능하다.
+
+
+            @Query("select distinct r from Review r join fetch r.comments")
+                List<Review> findAllByFetchJoin();
+
+
+
+        * Entity Graph
+            1) attributePaths에 쿼리 수행시 바로 가져올 필드명을 지정하면 Lazy가 아닌 Eager 조회로 가져오게 된다.
+            2) Fetch join과 동일하게 JPQL을 사용하여 query 문을 작성하고 필요한 연관관계를 EntityGraph에 설정하면 된다.
+            3) Fetch join과는 다르게 join 문이 outer join으로 실행되는 것을 확인
+            4) JPARepository의 메소드를 오버라이딩 하여 사용가능
+
+
+            @EntityGraph(attributePaths = "comments")
+            @Query("select r from Review r")
+            List<Review> findAllByEntityGraph();
+
+
+            @EntityGraph(attributePaths = "comments")
+            List<Review> findAll();
+
+        * 추가 해결 방안
+            https://incheol-jung.gitbook.io/docs/q-and-a/spring/n+1
+
+
+    - N+1 의 해결 방안은 join을 통하여 해결하고자 한다. 하지만 이 또한 너무 과하면 성능 문제가 발생
+    - 트러블 슈팅이라고 해서 모든게 문제가 아니라 상황에 맞게 사용해야 한다.

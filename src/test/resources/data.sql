@@ -20,3 +20,13 @@ insert into book(`id`, `name`, `publisher_id`, `deleted`, `status`) values (1, '
 insert into book(`id`, `name`, `publisher_id`, `deleted`, `status`) values (2, 'Spring Security ', 1, false, 200);
 
 insert into book(`id`, `name`, `publisher_id`, `deleted`, `status`) values (3, 'SpringBoot All In ONE Package ', 1, true, 100);
+
+insert into review(`id`, `title`, `content`, `score`, `user_id`, `book_id`) values (1, 'change my life', 'very good', 5.0, 1, 1);
+
+insert into review(`id`, `title`, `content`, `score`, `user_id`, `book_id`) values (2, 'so many fast', 'so so', 3.0, 2, 2);
+
+insert into comment(`id`, `comment`, `review_id`) values (1, 'good', 1);
+
+insert into comment(`id`, `comment`, `review_id`) values (2, 'so so', 1);
+
+insert into comment(`id`, `comment`, `review_id`) values (3, 'me too', 2);

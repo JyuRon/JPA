@@ -112,4 +112,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     //enum
     @Query(value = "select * from user limit 1", nativeQuery = true)
     Map<String, Object> findRawRecord();
+
+    @Query(value = "select * from user", nativeQuery = true)
+    List<Map<String, Object>> findAllRawRecord();
 }

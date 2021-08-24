@@ -39,6 +39,26 @@ public class User extends BaseEntity{
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city", column = @Column(name = "home_city")),
+            @AttributeOverride(name = "district", column = @Column(name = "home_district")),
+            @AttributeOverride(name = "detail", column = @Column(name = "home_address_detail")),
+            @AttributeOverride(name = "zipCode", column = @Column(name = "home_zip_code"))
+
+    })
+    private Address homeAddress;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city", column = @Column(name = "company_city")),
+            @AttributeOverride(name = "district", column = @Column(name = "company_district")),
+            @AttributeOverride(name = "detail", column = @Column(name = "company_address_detail")),
+            @AttributeOverride(name = "zipCode", column = @Column(name = "company_zip_code"))
+
+    })
+    private Address companyAddress;
+
     // NullPointerException 방지, 안해도 문제는 없긴 함
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
@@ -50,6 +70,10 @@ public class User extends BaseEntity{
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     private List<Review> reviews = new ArrayList<>();
+
+
+
+
 
 
 

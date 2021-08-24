@@ -1,0 +1,82 @@
+(1) Embeded를 사용하는 이유
+    - 4줄짜리는 address라는 클래스로 몪어서 한번에 처리
+    - @Embeddable 에서도 Entity 와 동일하게 @Column 어노테이션을 사용할 수 있음
+    - @Embeddable 살펴보면 사용 예시를 보여준다.
+
+    - Address Class 선언
+
+        @Embeddable
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public class Address {
+
+            private String city;    // 시
+            private String district;    // 구
+
+            @Column(name = "address_detail")
+            private String detail;  // 상세주소
+
+            private String zipCode; // 우편번호
+
+        }
+
+    - User Class Field 선언
+
+        @Embedded
+        private Address address;
+
+
+
+
+    - @Embedded 선언 후 table Log
+
+        create table user (
+                city varchar(255),
+                address_detail varchar(255),
+                district varchar(255),
+                zip_code varchar(255),
+
+
+
+(2) 동일한 Embedded Class를 사용할 경우
+
+
+    - 선언
+        @Embedded
+        private Address homeAddress;
+
+        @Embedded
+        private Address companyAddress;
+
+    - 동일한 컬럼이 생성되기 때문에 문제가 발생한다
+        @AttributeOverrides({
+                    @AttributeOverride(name = "city", column = @Column(name = "home_city")),
+                    @AttributeOverride(name = "district", column = @Column(name = "home_district")),
+                    @AttributeOverride(name = "detail", column = @Column(name = "home_address_detail")),
+                    @AttributeOverride(name = "zipCode", column = @Column(name = "home_zip_code"))
+
+            })
+
+
+(3) NullPointerException 문제가 발생할까??
+
+    - 선언
+        user1.setHomeAddress(null);
+        user2.setHomeAddress(new Address());
+
+    - JPA로 조회
+        homeAddress=null
+        homeAddress=Address(city=null, district=null, detail=null, zipCode=null)
+
+    - NativeQuery로 조회
+        [7, 2021-08-24 13:55:49.628576, 2021-08-24 13:55:49.628576, null, null, null, null, null, null, null, null, null, null, joshua]
+        [8, 2021-08-24 13:55:49.63456, 2021-08-24 13:55:49.63456, null, null, null, null, null, null, null, null, null, null, jordan]
+
+
+    - 이러한 차이는 영속성 context 에서 제공하는 cache때문에 생기는 현상이다.
+
+    - entityManager.clear() 이후
+        homeAddress=null, companyAddress=null
+        homeAddress=null, companyAddress=null
+
