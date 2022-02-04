@@ -5,7 +5,6 @@
 
 
 #### * 학습내용
-<pre><code>
 - MySQL 연동
   https://github.com/JyuRon/JPA/blob/master/src/main/resources/static/Repository/JpaMysql.txt
   
@@ -57,5 +56,3 @@
 - N+1 Issue
   https://github.com/JyuRon/JPA/blob/master/src/main/resources/static/JPA%20Trouble%20Shooting/N%2B1%20Issue.txt
 
-  
-</code></pre>
